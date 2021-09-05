@@ -15,7 +15,7 @@ function reply(data) {
   if (data.events[0].message.text == "遊ぼう") {
     var reply_message = "今週の予定は";
   } else {
-    var reply_message = "「遊ぼう」と送ると今週の予定を返信するよ！";
+    var reply_message = "「遊ぼう」と送ると今週の予定を返信するよ";
   }
 
   var postData = {
