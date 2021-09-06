@@ -11,10 +11,17 @@ function reply(data) {
     Authorization: "Bearer " + access_token,
   };
 
-  if (data.events[0].message.text == "遊ぼう") {
-    reply_message = getCalendar("今後のバイトの予定はこんな感じ！\n");
-  } else {
-    var reply_message = "むり";
+  if (data.events[0].message.text == "シフト教えて！") {
+    var start_message = [
+      "今後のシフトはこんな感じ！",
+      "いいよ〜",
+      "こんな感じかな",
+      "どうぞ〜",
+    ];
+    var rand_int = Math.floor(Math.random() * start_message.length);
+    reply_message = getCalendar(
+      start_message[rand_int] + "\n----------------\n"
+    ); //返信
   }
 
   var postData = {
@@ -36,6 +43,7 @@ function reply(data) {
   return UrlFetchApp.fetch(url, options);
 }
 
+// 返信用に予定データを整える
 function TimeDataProcessing(start, end) {
   var date = Utilities.formatDate(start, "JST", "yyyy/MM/dd"); // 日付
   var week = ["日", "月", "火", "水", "木", "金", "土"];
@@ -45,8 +53,9 @@ function TimeDataProcessing(start, end) {
   return date + "(" + day_of_week + ")" + " " + start_time + "-" + end_time;
 }
 
+// カレンダーから予定を取得しメッセージとして返す
 function getCalendar(message) {
-  const id = "*****"; // GoogleカレンダーID
+  const id = "*****@gmail.com";
   const calendar = CalendarApp.getCalendarById(id);
   const startDate = new Date();
   // 予定を取得する期間
@@ -58,9 +67,9 @@ function getCalendar(message) {
     var event_title = event.getTitle();
     var time = TimeDataProcessing(event.getStartTime(), event.getEndTime());
     if (i == events.length - 1) {
-      message += time + " " + event_title;
+      message += event_title + "\n" + time + "\n";
     } else {
-      message += time + " " + event_title + "\n";
+      message += event_title + "\n" + time + "\n";
     }
   }
   return message;
