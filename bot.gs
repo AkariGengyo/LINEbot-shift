@@ -12,24 +12,62 @@ function reply(data) {
   };
 
   if (data.events[0].message.text == "シフト教えて！") {
-    var start_message = [
-      "今後のシフトはこんな感じ！",
-      "いいよ〜",
-      "こんな感じかな",
-      "どうぞ〜",
-    ];
-    var rand_int = Math.floor(Math.random() * start_message.length);
-    reply_message = getCalendar(
-      start_message[rand_int] + "\n----------------\n"
-    ); //返信
+    reply_message = getCalendar(); //返信
   }
 
+  // var postData = {
+  //   "replyToken" : data.events[0].replyToken,
+  //   "messages" : [
+  //     {
+  //       'type':'text',
+  //       'text':reply_message, //　返信するメッセージ
+  //     }
+  //   ]
+  // };
   var postData = {
     replyToken: data.events[0].replyToken,
     messages: [
       {
-        type: "text",
-        text: reply_message, //　返信するメッセージ
+        type: "flex",
+        altText: "This is a Flex Message",
+        contents: {
+          type: "bubble",
+          styles: {
+            header: {
+              backgroundColor: "#79B4B7",
+            },
+          },
+          header: {
+            type: "box",
+            layout: "vertical",
+            contents: [
+              {
+                type: "text",
+                text: "シフト情報",
+                color: "#ffffff",
+                weight: "bold",
+                size: "lg",
+              },
+            ],
+          },
+          hero: {
+            type: "image",
+            url: "*****.png",
+            size: "full",
+            aspectRatio: "4:3",
+          },
+          body: {
+            type: "box",
+            layout: "horizontal",
+            contents: [
+              {
+                type: "text",
+                text: reply_message,
+                wrap: true,
+              },
+            ],
+          },
+        },
       },
     ],
   };
@@ -54,7 +92,7 @@ function TimeDataProcessing(start, end) {
 }
 
 // カレンダーから予定を取得しメッセージとして返す
-function getCalendar(message) {
+function getCalendar() {
   const id = "*****@gmail.com";
   const calendar = CalendarApp.getCalendarById(id);
   const startDate = new Date();
@@ -62,7 +100,7 @@ function getCalendar(message) {
   const endDate = new Date(Date.parse(startDate) + 30 * 60 * 60 * 24 * 1000);
   // 予定をGoogleカレンダーから取得
   const events = calendar.getEvents(startDate, endDate);
-
+  var message = "";
   for ([i, event] of events.entries()) {
     var event_title = event.getTitle();
     var time = TimeDataProcessing(event.getStartTime(), event.getEndTime());
