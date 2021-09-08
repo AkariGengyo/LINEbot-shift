@@ -1,6 +1,5 @@
 //Channel Access Token
-var access_token =
-  "lV8S2FjgWF0aN+82iGpYdSZ4Rs7vj9K4ieiCutY5iUsqE8NvRumWS3+Yx4ReNjkhiMMCC3y6qI3D9UJ3cxF0LiN/8qs+vZnlN5UblOTq4wc0omGJsloIMhQ5ZwDjJe/3bYJJwkegkjHCdMBvU5zXPwdB04t89/1O/w1cDnyilFU=";
+var access_token = "*****";
 
 /**
  * reply_tokenを使ってreplyする
@@ -104,7 +103,7 @@ function TimeDataProcessing(start, end) {
 
 // カレンダーから予定を取得しメッセージとして返す
 function getCalendar() {
-  const id = "gen.akari.1453@gmail.com";
+  const id = "*****@gmail.com";
   const calendar = CalendarApp.getCalendarById(id);
   const startDate = new Date();
   // 予定を取得する期間
