@@ -65,16 +65,6 @@ function reply(data) {
               },
             ],
           },
-          // "footer": {
-          // "type": "box",
-          // "layout": "vertical",
-          // "contents": [
-          //   {
-          //     "type": "text",
-          //     "text": "footer"
-          //   }
-          // ]
-          // }
         },
       },
     ],
