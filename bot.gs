@@ -208,7 +208,6 @@ function makeCalendar() {
   }
   return contents_json_array_h;
 }
-
 // POST送信されたデータをGASで受信するイベントハンドラ
 function doPost(e) {
   // JSON文字列をGASが取り扱える形式に解析
