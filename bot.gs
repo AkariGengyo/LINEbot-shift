@@ -10,9 +10,6 @@ function reply(data) {
     "Content-Type": "application/json; charset=UTF-8",
     Authorization: "Bearer " + access_token,
   };
-  var j = [{ type: "text", text: "peach" }];
-  console.log("j", j);
-  console.log("makeCalendar()", makeCalendar());
   if (data.events[0].message.text == "シフト教えて！") {
     reply_message = getCalendar(); // テキストで返信する日程
   }
@@ -55,6 +52,7 @@ function reply(data) {
                 contents: makeCalendar(),
               },
             ],
+            paddingAll: "10px",
           },
           body: {
             type: "box",
@@ -92,7 +90,7 @@ function reply(data) {
 }
 
 // 返信用に予定データを整える
-function TimeDataProcessing(start, end) {
+function timeDataProcessing(start, end) {
   var date = Utilities.formatDate(start, "JST", "yyyy/MM/dd"); // 日付
   var week = ["日", "月", "火", "水", "木", "金", "土"];
   var day_of_week = week[start.getDay()]; // 曜日
@@ -103,7 +101,7 @@ function TimeDataProcessing(start, end) {
 
 // カレンダーから予定を取得しメッセージとして返す
 function getCalendar() {
-  const id = "*****@gmail.com";
+  const id = "gen.akari.1453@gmail.com";
   const calendar = CalendarApp.getCalendarById(id);
   const startDate = new Date();
   // 予定を取得する期間
@@ -113,12 +111,8 @@ function getCalendar() {
   var message = "";
   for ([i, event] of events.entries()) {
     var event_title = event.getTitle();
-    var time = TimeDataProcessing(event.getStartTime(), event.getEndTime());
-    if (i == events.length - 1) {
-      message += event_title + "\n" + time + "\n";
-    } else {
-      message += event_title + "\n" + time + "\n";
-    }
+    var time = timeDataProcessing(event.getStartTime(), event.getEndTime());
+    message += event_title + "\n" + time + "\n";
   }
   return message;
 }
@@ -127,12 +121,19 @@ function makeCalendar() {
   var dt = new Date();
   var year = dt.getFullYear();
   var month = dt.getMonth(); // 今月の値-1
+  var date = dt.getDate(); // 今日の日付
   var start_day_of_week = new Date(year, month, 1).getDay(); // 今月のスタートの曜日の数
   var end_date = new Date(year, month + 1, 0).getDate(); // 月の末日
 
   // カレンダーを埋める日付の配列
   var day = [];
-  for (var i = 0; i < 42; i++) {
+  // カレンダーが5行の場合と6行の場合の判定
+  var h = 5;
+  if (35 < start_day_of_week + end_date) {
+    h = 6;
+  }
+  // カレンダーを埋める日付の配列を作成
+  for (var i = 0; i < 7 * h; i++) {
     // 日付がないマス
     if (i < start_day_of_week || end_date + start_day_of_week - 1 < i) {
       day.push(" ");
@@ -141,6 +142,15 @@ function makeCalendar() {
     }
   }
 
+  // 予定のある日付を取得
+  const id = "*****@gmail.com";
+  const calendar = CalendarApp.getCalendarById(id);
+  const startDate = new Date();
+  // 予定を取得する期間
+  const endDate = new Date(Date.parse(startDate) + 30 * 60 * 60 * 24 * 1000);
+  // 予定をGoogleカレンダーから取得
+  const events = calendar.getEvents(startDate, endDate);
+  console.log(events);
   var week = ["日", "月", "火", "水", "木", "金", "土"];
   // カレンダー縦方向(_h)
   var contents_json_array_h = [
@@ -157,14 +167,29 @@ function makeCalendar() {
     },
     { type: "separator" },
   ];
-  var contents_h;
-  for (var h_i = 0; h_i < 7; h_i++) {
+
+  for (var h_i = 0; h_i < h + 1; h_i++) {
     // カレンダー横方向(_w)
     var contents_json_array_w = [];
     var contents_w;
     for (var w_i = 0; w_i < 7; w_i++) {
       contents_w = {};
       contents_w.type = "text";
+      contents_w.align = "center"; // 水平方向位置合わせ
+      contents_w.size = "md";
+      contents_w.gravity = "center"; // 垂直方向位置合わせ
+      // 文字色の指定
+      if (w_i == 0) {
+        // 日曜
+        contents_w.color = "#FF577F"; // 赤
+      } else if (w_i == 6) {
+        // 土曜
+        contents_w.color = "#3DB2FF"; // 青
+      }
+      if (date == day[w_i + (h_i - 1) * 7]) {
+        // 今日
+        contents_w.color = "#21BF73"; // 緑
+      }
       // 1行目は曜日を表示
       if (h_i == 0) {
         contents_w.text = week[w_i];
@@ -174,12 +199,13 @@ function makeCalendar() {
       contents_json_array_w.push(contents_w);
       // 仕切り（縦）
       if (w_i != 6) {
+        // 右端以外
         contents_w = {};
         contents_w.type = "separator";
         contents_json_array_w.push(contents_w);
       }
     }
-    contents_h = {};
+    var contents_h = {};
     contents_h.type = "box";
     contents_h.layout = "horizontal";
     contents_h.spacing = "md";
