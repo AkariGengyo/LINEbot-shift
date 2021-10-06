@@ -65,6 +65,16 @@ function reply(data) {
               },
             ],
           },
+          // "footer": {
+          // "type": "box",
+          // "layout": "vertical",
+          // "contents": [
+          //   {
+          //     "type": "text",
+          //     "text": "footer"
+          //   }
+          // ]
+          // }
         },
       },
     ],
@@ -91,7 +101,7 @@ function timeDataProcessing(start, end) {
 
 // カレンダーから予定を取得しメッセージとして返す
 function getCalendar() {
-  const id = "gen.akari.1453@gmail.com";
+  const id = "*****@gmail.com";
   const calendar = CalendarApp.getCalendarById(id);
   const startDate = new Date();
   // 予定を取得する期間
@@ -208,6 +218,7 @@ function makeCalendar() {
   }
   return contents_json_array_h;
 }
+
 // POST送信されたデータをGASで受信するイベントハンドラ
 function doPost(e) {
   // JSON文字列をGASが取り扱える形式に解析
